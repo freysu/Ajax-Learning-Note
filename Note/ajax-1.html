@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title></title>
+</head>
+<body>
+    <div>
+        <input type="text" name="" id='toTranslate' placeholder="要翻译的中文" value=""></input>
+        <button>翻译</button>
+        <input type="text" name="" id='fromTranslate' placeholder="翻译的英文结果" value=""></input>
+    </div>
+    <script>
+        let to = document.querySelector("toTranslate");
+        let from = document.querySelector("fromTranslate");
+        let btn = document.querySelector("button");
+        btn.onclick = function(){
+        console.log(to.value)
+        
+        // 1. 通过XMLHttpRequest构造函数，创建一个XHR对象。
+        let xhr = new XMLHttpRequest()
+
+        // 2. xhr.open(x,y,z) 
+        // xhr.open() 不会实际发送请求，只是为发送请求做好准备。
+        // open()接受3个参数，分别是请求类型，请求URL，请求是否异步的布尔值
+        // 请求类型：get、post等
+        // 请求URL：可以是相对与代码所在页面的，也可以是绝对URL。
+
+        // 向example.txt发送一个同步的GET请求
+        function addURLParam(url, name, value) {
+          url += (url.indexOf('?') == -1 ? '?' : '&')
+          url += encodeURIComponent(name) + '=' + encodeURIComponent(value)
+          return url
+        }
+        let url = 'https://api.muxiaoguo.cn/api/Tn_tencent'
+        url = addURLParam(url, 'text', to.value)
+        xhr.open('GET', url, false)
+
+        // 3. xhr.send()
+        // send()方法接收一个参数，是作为请求体发送的数据。如果不需要发送请求体，则必须传`null`，因为这个参数在某些浏览器中是必需的。调用这个方法后，请求就会发送到服务器。
+        xhr.send(null)
+
+        if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304) {
+            console.log(JSON.parse(xhr.responseText).data.Original)
+            from.value = String(JSON.parse(xhr.responseText).data.Original);
+        } else {
+            console.log('Request was unsuccessful:' + xhr.status)
+        }
+    }
+    </script>
+</body>
+</html>
